@@ -3,7 +3,7 @@ const axios = require('axios');
 
 // Inicializa el objeto cliente de MercadoPago
 const client = new MercadoPagoConfig({
-    accessToken: MERCADOPAGO_ACCESS_TOKEN
+    accessToken: 'APP_USR-2324171826250686-120122-c073e6b1f6946e5425eafc25895f7de6-304962566'
 });
 
 // Función para manejar webhooks de Monday.com y generar link de pago
@@ -32,7 +32,7 @@ exports.generarLinkPago = async (req, res) => {
             query: query
         }, {
             headers: {
-                'Authorization': MONDAY_API_TOKEN,
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIzMjg3MzUyNCwiYWFpIjoxMSwidWlkIjoyMzUzNzM2NCwiaWFkIjoiMjAyMy0wMS0zMVQyMTowMjoxNy4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6OTUwNzUxNiwicmduIjoidXNlMSJ9.lX1RYu90B2JcH0QxITaF8ymd4d6dBes0FJHPI1mzSRE',
                 'Content-Type': 'application/json'
             }
         });
@@ -49,7 +49,14 @@ exports.generarLinkPago = async (req, res) => {
             throw new Error('Datos necesarios no están presentes en el evento');
         }
 
+        // Obtienes el monto y lo conviertes a número flotante
         const monto = parseFloat(montoColumn.text);
+
+        // Aquí verificas si monto es un número válido
+        if (monto === null || isNaN(monto)) {
+            throw new Error('El monto no es un número válido');
+        }
+
         const descripcion = descripcionColumn.text;
         const email = emailColumn.text;
 
@@ -60,7 +67,7 @@ exports.generarLinkPago = async (req, res) => {
         // Inicializa el objeto API de pago
         const payment = new Payment(client);
         const montoFinal = monto * 1; // Calcula el monto total
-
+        
         const preference = {
             items: [{
                 title: descripcion,
@@ -73,13 +80,14 @@ exports.generarLinkPago = async (req, res) => {
                 excluded_payment_methods: [],
                 excluded_payment_types: [],
                 installments: 6, // Ejemplo: Número de cuotas
-            transaction_amount: montoFinal, // Utiliza la variable montoFinal
-
             },
+            transaction_amount: parseFloat(montoFinal), // Campo en el nivel correcto
             // Otros campos y configuraciones necesarios...
         };
+        
         console.log(preference)
         console.log(montoFinal)
+        
         
         // Realiza la solicitud para crear la preferencia de pago
         let preferenceResponse = await payment.create(preference);
@@ -97,7 +105,7 @@ exports.generarLinkPago = async (req, res) => {
             }`
         }, {
             headers: {
-                'Authorization': MONDAY_API_TOKEN,
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIzMjg3MzUyNCwiYWFpIjoxMSwidWlkIjoyMzUzNzM2NCwiaWFkIjoiMjAyMy0wMS0zMVQyMTowMjoxNy4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6OTUwNzUxNiwicmduIjoidXNlMSJ9.lX1RYu90B2JcH0QxITaF8ymd4d6dBes0FJHPI1mzSRE',
                 'Content-Type': 'application/json'
             }
         });
