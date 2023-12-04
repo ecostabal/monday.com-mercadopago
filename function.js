@@ -6,7 +6,7 @@ const client = new MercadoPagoConfig({
     accessToken: 'APP_USR-2324171826250686-120122-c073e6b1f6946e5425eafc25895f7de6-304962566'
 });
 
-// Función para manejar webhooks de Monday.com y generar link de pago
+// Función para manejar webhooks de Monday.com y generar link de pago MP
 exports.generarLinkPago = async (req, res) => {
     try {
         console.log("Inicio de la función");
