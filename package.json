@@ -1,11 +1,10 @@
 {
-  "name": "generarLinkPago",
+  "name": "generarLinkPagoFlow",
   "version": "1.0.0",
   "description": "Función de Google Cloud para crear un link de pago en MercadoPago",
   "main": "function.js",
   "dependencies": {
     "axios": "^0.27.2",
-    "mercadopago": "^2.0.5",
     "@google-cloud/functions-framework": "^3.0.0"
   },
   "engines": {
